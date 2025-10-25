@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Store</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="header">
+  <div class="container">
+    <h2>Product Store</h2>
+  </div>
+</header>
+
+<main class="container">
+  <div class="filter-section">
+    <label for="category-filter">Filter by Category:</label>
+    <select id="category-filter">
+      <option value="all">All Categories</option>
+      <!-- Options will be populated dynamically -->
+    </select>
+  </div>
+
+  <div class="product-list" id="product-list">
+    <!-- Products will appear here -->
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    &copy; 2024 Product Store
+  </div>
+</footer>
+
+<script>
+  // Fetch products from FakeStoreAPI
+  const productListEl = document.getElementById('product-list');
+  const filterSelect = document.getElementById('category-filter');
+
+  let allProducts = [];
+
+  // Fetch and render
+  fetch('https://fakestoreapi.com/products')
+    .then(res => res.json())
+    .then(products => {
+      allProducts = products;
+
+      // Extract unique categories
+      const categories = [...new Set(products.map(p => p.category))].sort();
+
+      // Populate dropdown
+      categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+        filterSelect.appendChild(option);
+      });
+
+      renderProducts(products);
+    })
+    .catch(err => {
+      productListEl.innerHTML = `<p style="text-align:center; color:red;">Failed to load products: ${err.message}</p>`;
+    });
+
+  function renderProducts(products) {
+    if (products.length === 0) {
+      productListEl.innerHTML = '<p style="text-align:center;">No products found.</p>';
+      return;
+    }
+
+    productListEl.innerHTML = products.map(p => `
+        <div class="product-card">
+          <img src="${p.image}" alt="${p.title}" loading="lazy" />
+          <h3>${p.title}</h3>
+          <p class="price">$${p.price.toFixed(2)}</p>
+          <p><strong>Category:</strong> ${p.category}</p>
+        </div>
+      `).join('');
+  }
+
+  // Filter handler
+  filterSelect.addEventListener('change', () => {
+    const selected = filterSelect.value;
+    const filtered = selected === 'all'
+      ? allProducts
+      : allProducts.filter(p => p.category === selected);
+    renderProducts(filtered);
+  });
+</script>
+</body>
+</html>
