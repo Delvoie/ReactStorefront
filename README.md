@@ -7,7 +7,7 @@ A modern e-commerce storefront built with React and Vite.
 - Fast and responsive user interface
 - Product browsing and details pages
 - Context-based state management
-- Modern UI with Tailwind CSS
+- Modern UI
 - React Router for navigation
 - React Icons integration
 
